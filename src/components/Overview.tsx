@@ -9,8 +9,6 @@ const Overview = () => {
   const [leverage, setLeverage] = useState<number>(15)
   const [tradingSize, setTradingSize] = useState<number | undefined>(undefined)
   const [liquidationPrice, setLiquidationPrice] = useState<number | null>(0)
-  // const [countDeci, setCountDeci] = useState(2)
-  // const [roiPercentage, setRoiPercentage] = useState(15)
   const [roi, setRoi] = useState<number>(0)
   const [pnl, setPnl] = useState<number>(0)
 
@@ -106,8 +104,7 @@ const Overview = () => {
     }
 
     const margin = tradingSize
-    // const roiPer:number = 0
-    // const pnlWithoutLeverage:number = 0
+
     const isLong = positionType === 'long'
     const roiPercentage = isLong
       ? ((exitPrice - entryPrice) / entryPrice) * 100 * leverage // Long
@@ -117,27 +114,12 @@ const Overview = () => {
 
     const exitRoi = isNaN(roiPercentage) ? '' : roiPercentage.toFixed(2)
     const exitPnl = ((roiPercentage / 100) * margin).toFixed(decimalPlaces)
-    // const exitPnl = isNaN(pnlAmount) ? '' : pnlAmount
-
-    // if (positionType === 'long') {
-    //   // Long berekening
-    //   roiPer = ((exitPrice - entryPrice) / entryPrice) * 100 * leverage
-    // } else if (positionType === 'short') {
-    //   // Short berekening
-    //   roiPer = ((entryPrice - exitPrice) / entryPrice) * 100 * leverage
-    // }
 
     setRoi(Number(exitRoi))
     setPnl(Number(exitPnl))
   }
-  // const handleExitChange = (event) => {
-  //   const newExitValue = parseFloat(event.target.value)
-  //   setExitPrice(newExitValue)
-  //   calculateExitPrice(newExitValue) // Bereken ROI en PNL
-  // }
 
   useEffect(() => {
-    // roiPnl()
     calculateExitPrice()
     calculateQuantity()
     calculateLiquidationPrice()
@@ -175,22 +157,6 @@ const Overview = () => {
               </div>
 
               <div className="flex justify-between text-center font-extrabold border rounded-lg">
-                {/* <button
-                  className={`w-full py-1  rounded-l-lg ${
-                    positionType === 'long' ? 'bg-[#2ebd85] ' : ''
-                  }`}
-                  onClick={() => setPositionType('long')}
-                >
-                  Long
-                </button>
-                <button
-                  className={`w-full py-1  rounded-r-lg ${
-                    positionType === 'short' ? 'bg-[#f6465d] ' : ''
-                  }`}
-                  onClick={() => setPositionType('short')}
-                >
-                  Short
-                </button> */}
                 <button
                   className={`w-full py-1  rounded-l-lg ${
                     positionType === 'long' ? 'bg-[#2ebd85] ' : ''
@@ -325,19 +291,10 @@ const Overview = () => {
                   <span>Liquidation Price:</span>
                   <span>{liquidationPrice || ''} USD</span>{' '}
                 </div>
-                {/* <hr className="w-[60%] mx-auto"></hr>
-                <div className="flex justify-between">
-                  <span>ROI (15%)</span>
-                  <span>{roi || ''} ROI</span>{' '}
-                </div>
-                <div className="flex justify-between">
-                  <span>PNL (15%)</span>
-                  <span>{pnl || ''} PNL</span>{' '}
-                </div> */}
 
                 <div>
                   {roiPercentages.map((percentage) => {
-                    const { validRoi, validPnl } = roiPnl(percentage) // Bereken ROI en PNL voor elk percentage
+                    const { validRoi, validPnl } = roiPnl(percentage)
 
                     return (
                       <div key={percentage}>
