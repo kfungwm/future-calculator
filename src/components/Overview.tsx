@@ -43,10 +43,7 @@ const Overview = () => {
 
   const calculateLiquidationPrice = () => {
     const decimalPlaces = getDecimalPlaces(entryPrice ?? 0)
-    // if (entryPrice <= 0 || tradingSize <= 0 || leverage <= 1) {
-    //   setLiquidationPrice(null)
-    //   return
-    // }
+
     if (
       entryPrice === undefined ||
       tradingSize === undefined ||
@@ -57,7 +54,7 @@ const Overview = () => {
     }
 
     const maintenanceMargin = 0.0 // 0.5% maintenance margin, adjust as needed
-    const positionSize = tradingSize * leverage
+    // const positionSize = tradingSize * leverage
 
     if (positionType === 'long') {
       const liqPrice = (
