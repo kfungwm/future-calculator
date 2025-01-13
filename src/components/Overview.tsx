@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
+import { SunIcon, MoonIcon } from '@heroicons/react/24/solid'
 
 const Overview = () => {
   const [positionType, setPositionType] = useState<string>('long')
@@ -11,6 +12,11 @@ const Overview = () => {
   const [liquidationPrice, setLiquidationPrice] = useState<number | null>(0)
   const [roi, setRoi] = useState<number>(0)
   const [pnl, setPnl] = useState<number>(0)
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
+
+  const toggleTheme = () => {
+    setIsDarkMode((prevMode) => !prevMode)
+  }
 
   const handleChange = (value: number) => {
     const newValue = Math.max(2, Math.min(100, Number(value)))
@@ -134,14 +140,44 @@ const Overview = () => {
     pnl,
   ])
 
+  useEffect(() => {
+    // Laad de opgeslagen modus uit localStorage
+    const savedMode = localStorage.getItem('theme')
+    if (savedMode === 'dark') {
+      setIsDarkMode(true)
+      document.documentElement.classList.add('dark')
+    } else {
+      setIsDarkMode(false)
+      document.documentElement.classList.remove('dark')
+    }
+  }, [])
+
+  useEffect(() => {
+    // Sla de voorkeur op in localStorage
+    if (isDarkMode) {
+      localStorage.setItem('theme', 'dark')
+      document.documentElement.classList.add('dark')
+    } else {
+      localStorage.setItem('theme', 'light')
+      document.documentElement.classList.remove('dark')
+    }
+  }, [isDarkMode])
+
   return (
-    <div className="lg:px-10 lg:py-20  justify-center items-center text-center max-w-[1200px]">
+    <div className="my-4 lg:px-10 lg:py-20  justify-center items-center text-center max-w-[1200px]">
+      <div className="w-full flex justify-end my-4">
+        <button onClick={toggleTheme}>
+          {isDarkMode ? <SunIcon width={20} /> : <MoonIcon width={20} />}
+        </button>
+      </div>
+
       <div className="font-extrabold text-3xl mb-10">Futures Calculator</div>
+
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1 border w-full sm:w-[400px] p-5 rounded-lg bg-[#202630]">
+        <div className="flex-1 border border-slate-400 dark:border-white w-full sm:w-[400px] p-5 rounded-lg bg-gray-100 dark:bg-[#202630] text-gray-900 dark:text-gray-100 shadow-xl">
           <div className="w-full">
             <div className="space-y-5">
-              <div className="flex w-full justify-between items-center border rounded-lg p-4 font-extrabold">
+              <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white rounded-lg p-4 font-extrabold">
                 <div className="whitespace-nowrap text-xs">Trading Size</div>
                 <div className="w-full flex justify-end items-center">
                   <input
@@ -156,7 +192,7 @@ const Overview = () => {
                 </div>
               </div>
 
-              <div className="flex justify-between text-center font-extrabold border rounded-lg">
+              <div className="flex justify-between text-center font-extrabold border border-slate-400 dark:border-white rounded-lg">
                 <button
                   className={`w-full py-1  rounded-l-lg ${
                     positionType === 'long' ? 'bg-[#2ebd85] ' : ''
@@ -175,7 +211,7 @@ const Overview = () => {
                 </button>
               </div>
 
-              <div className="border rounded-lg w-full p-3 flex justify-between font-extrabold text-xl items-center">
+              <div className="border border-slate-400 dark:border-white  rounded-lg w-full p-3 flex justify-between font-extrabold text-xl items-center">
                 <button
                   className="cursor-pointer"
                   onClick={() => handleChange(leverage - 1)}
@@ -228,7 +264,7 @@ const Overview = () => {
                 </section>
               </div>
 
-              <div className="flex w-full justify-between items-center border rounded-lg p-2 px-4 font-extrabold">
+              <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
                 <div className="whitespace-nowrap">Entry Price</div>
                 <div className="w-full flex justify-end items-center">
                   <input
@@ -243,7 +279,7 @@ const Overview = () => {
                 </div>
               </div>
 
-              <div className="flex w-full justify-between items-center border rounded-lg p-2 px-4 font-extrabold">
+              <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
                 <div className="whitespace-nowrap">Exit Price</div>
                 <div className="w-full flex justify-end items-center">
                   <input
@@ -259,7 +295,7 @@ const Overview = () => {
                 </div>
               </div>
 
-              <div className="flex w-full justify-between items-center border rounded-lg p-2 px-4 font-extrabold">
+              <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
                 <div className="whitespace-nowrap">Quantity</div>
                 <div className="w-full flex justify-end items-center">
                   <input
@@ -283,7 +319,7 @@ const Overview = () => {
           </div>
         </div>
         <div>
-          <div className="md:h-[487.5px] border w-full sm:w-[400px] p-5 rounded-lg bg-[#202630] font-extrabold">
+          <div className="md:h-[487.5px] border w-full sm:w-[400px] p-5 rounded-lg bg-gray-100 dark:bg-[#202630] text-gray-900 dark:text-gray-100 border-slate-400 dark:border-white font-extrabold shadow-xl">
             <div className="w-full">
               <div className="space-y-5">
                 <div className="flex">Result</div>
@@ -299,7 +335,7 @@ const Overview = () => {
                     return (
                       <div key={percentage}>
                         <div className="space-y-3 items-center mb-3">
-                          <hr className="w-[60%] mx-auto"></hr>
+                          <hr className="w-[60%] mx-auto border-t-2 border-gray-300 dark:border-gray-400 "></hr>
                           <div className="flex justify-between">
                             <span>ROI ({percentage}%)</span>
                             <span>{validRoi || ''} USD</span>
