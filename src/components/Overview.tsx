@@ -190,7 +190,7 @@ const Overview = () => {
                     min="0"
                     value={tradingSize || ''}
                     onChange={(e) => setTradingSize(Number(e.target.value))}
-                    className="bg-transparent outline-none text-right appearance-none"
+                    className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
                     placeholder="0"
                   ></input>
                   <div className="ml-2">USD</div>
@@ -278,7 +278,7 @@ const Overview = () => {
                     value={entryPrice || ''}
                     onChange={(e) => setentryPrice(Number(e.target.value))}
                     placeholder="0"
-                    className="bg-transparent outline-none text-right appearance-none"
+                    className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
                   ></input>
                   <div className="ml-2">USD</div>
                 </div>
@@ -294,7 +294,7 @@ const Overview = () => {
                     value={exitPrice || ''}
                     onChange={(e) => setExitPrice(Number(e.target.value))}
                     // onChange={handleExitChange}
-                    className="bg-transparent outline-none text-right appearance-none"
+                    className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
                   ></input>
                   <div className="ml-2">USD</div>
                 </div>
@@ -310,7 +310,7 @@ const Overview = () => {
                     value={quantity.toFixed(2) || ''}
                     // onChange={quantity}
                     placeholder=""
-                    className="bg-transparent outline-none text-right appearance-none"
+                    className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
                   ></input>
                   <div className="ml-2">Tokens</div>
                 </div>
