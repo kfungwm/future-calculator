@@ -141,19 +141,24 @@ const Overview = () => {
   ])
 
   useEffect(() => {
-    // Laad de opgeslagen modus uit localStorage
+    const systemTheme = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches
+
     const savedMode = localStorage.getItem('theme')
     if (savedMode === 'dark') {
       setIsDarkMode(true)
       document.documentElement.classList.add('dark')
-    } else {
+    } else if (savedMode === 'light') {
       setIsDarkMode(false)
       document.documentElement.classList.remove('dark')
+    } else {
+      setIsDarkMode(systemTheme)
+      document.documentElement.classList.toggle('dark', systemTheme)
     }
   }, [])
 
   useEffect(() => {
-    // Sla de voorkeur op in localStorage
     if (isDarkMode) {
       localStorage.setItem('theme', 'dark')
       document.documentElement.classList.add('dark')
