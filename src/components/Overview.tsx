@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { SunIcon, MoonIcon } from '@heroicons/react/24/solid'
+import { SunIcon, MoonIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 
 const Overview = () => {
   const [positionType, setPositionType] = useState<string>('long')
@@ -125,6 +125,14 @@ const Overview = () => {
     setPnl(Number(exitPnl))
   }
 
+  const resetValue = () => {
+    setTradingSize(undefined)
+    setPositionType('long')
+    setLeverage(15)
+    setentryPrice(undefined)
+    setExitPrice(undefined)
+  }
+
   useEffect(() => {
     calculateExitPrice()
     calculateQuantity()
@@ -181,8 +189,14 @@ const Overview = () => {
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 border border-slate-400 dark:border-white w-full sm:w-[400px] p-5 rounded-lg bg-gray-100 dark:bg-[#202630] text-gray-900 dark:text-gray-100 shadow-xl">
           <div className="w-full">
+            {/* <div className="relative flex justify-end mb-2">
+              <button onClick={() => resetValue()}>
+                <ArrowPathIcon width={20} />
+              </button>
+            </div>{' '} */}
             <div className="space-y-5">
-              <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white rounded-lg p-4 font-extrabold">
+              {' '}
+              <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white rounded-lg p-4 font-extrabold space-y-0">
                 <div className="whitespace-nowrap text-xs">Trading Size</div>
                 <div className="w-full flex justify-end items-center">
                   <input
@@ -196,7 +210,6 @@ const Overview = () => {
                   <div className="ml-2">USD</div>
                 </div>
               </div>
-
               <div className="flex justify-between text-center font-extrabold border border-slate-400 dark:border-white rounded-lg">
                 <button
                   className={`w-full py-1  rounded-l-lg ${
@@ -215,7 +228,6 @@ const Overview = () => {
                   Short
                 </button>
               </div>
-
               <div className="border border-slate-400 dark:border-white  rounded-lg w-full p-3 flex justify-between font-extrabold text-xl items-center">
                 <button
                   className="cursor-pointer"
@@ -268,7 +280,6 @@ const Overview = () => {
                   </datalist>
                 </section>
               </div>
-
               <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
                 <div className="whitespace-nowrap">Entry Price</div>
                 <div className="w-full flex justify-end items-center">
@@ -283,7 +294,6 @@ const Overview = () => {
                   <div className="ml-2">USD</div>
                 </div>
               </div>
-
               <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
                 <div className="whitespace-nowrap">Exit Price</div>
                 <div className="w-full flex justify-end items-center">
@@ -299,7 +309,6 @@ const Overview = () => {
                   <div className="ml-2">USD</div>
                 </div>
               </div>
-
               <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
                 <div className="whitespace-nowrap">Quantity</div>
                 <div className="w-full flex justify-end items-center">
@@ -327,7 +336,12 @@ const Overview = () => {
           <div className="md:h-[487.5px] border w-full sm:w-[400px] p-5 rounded-lg bg-gray-100 dark:bg-[#202630] text-gray-900 dark:text-gray-100 border-slate-400 dark:border-white font-extrabold shadow-xl">
             <div className="w-full">
               <div className="space-y-5">
-                <div className="flex">Result</div>
+                <div className="flex justify-between">
+                  <div className="">Result</div>
+                  <button onClick={() => resetValue()}>
+                    <ArrowPathIcon width={18} />
+                  </button>
+                </div>
                 <div className="flex justify-between">
                   <span>Liquidation Price:</span>
                   <span>{liquidationPrice || ''} USD</span>{' '}
