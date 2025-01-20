@@ -13,6 +13,7 @@ const Overview = () => {
   const [roi, setRoi] = useState<number>(0)
   const [pnl, setPnl] = useState<number>(0)
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
+  const [optionTrading, setOptionTrading] = useState<string>('trading')
 
   const toggleTheme = () => {
     setIsDarkMode((prevMode) => !prevMode)
@@ -27,15 +28,51 @@ const Overview = () => {
     setPositionType(type)
   }
 
+  const tradingToken = (type: string) => {
+    resetValue()
+
+    setOptionTrading(type)
+  }
+
+  // const calculateQuantity = () => {
+  //   if (
+  //     //  quantity !== undefined &&
+  //     tradingSize !== undefined &&
+  //     entryPrice !== undefined &&
+  //     tradingSize > 0 &&
+  //     entryPrice > 0
+  //   )
+  //     if (optionTrading === 'trading') {
+  //       const totalQuantity = (tradingSize * leverage) / entryPrice
+  //       setQuantity(totalQuantity)
+  //       console.log('inside quan')
+  //     } else {
+  //       const totalTradingSize = (quantity / leverage) * entryPrice
+  //       setTradingSize(totalTradingSize)
+  //       console.log('hello trading', totalTradingSize)
+  //       console.log('hello tradingSize', tradingSize)
+  //     }
+  // }
   const calculateQuantity = () => {
-    if (
-      tradingSize !== undefined &&
-      entryPrice !== undefined &&
-      tradingSize > 0 &&
-      entryPrice > 0
-    ) {
-      const totalQuantity = (tradingSize * leverage) / entryPrice
-      setQuantity(totalQuantity)
+    if (entryPrice !== undefined && entryPrice > 0) {
+      if (
+        optionTrading === 'trading' &&
+        tradingSize !== undefined &&
+        tradingSize > 0
+      ) {
+        // Berekening voor 'trading'
+        const totalQuantity = (tradingSize * leverage) / entryPrice
+        setQuantity(totalQuantity)
+        console.log('inside trading calculation')
+      } else if (optionTrading === 'coin' && quantity > 0) {
+        // Berekening voor 'cointoken'
+        const totalTradingSize = (quantity / leverage) * entryPrice
+        setTradingSize(totalTradingSize)
+        console.log('inside cointoken calculation')
+        console.log('calculated tradingSize:', totalTradingSize)
+      }
+    } else {
+      console.log('Entry price is invalid or missing.')
     }
   }
 
@@ -131,6 +168,8 @@ const Overview = () => {
     setLeverage(15)
     setentryPrice(undefined)
     setExitPrice(undefined)
+    setQuantity(0)
+    setOptionTrading('trading')
   }
 
   useEffect(() => {
@@ -146,6 +185,7 @@ const Overview = () => {
     positionType,
     roi,
     pnl,
+    optionTrading,
   ])
 
   useEffect(() => {
@@ -195,21 +235,59 @@ const Overview = () => {
               </button>
             </div>{' '} */}
             <div className="space-y-5">
-              {' '}
-              <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white rounded-lg p-4 font-extrabold space-y-0">
-                <div className="whitespace-nowrap text-xs">Trading Size</div>
-                <div className="w-full flex justify-end items-center">
-                  <input
-                    type="number"
-                    min="0"
-                    value={tradingSize || ''}
-                    onChange={(e) => setTradingSize(Number(e.target.value))}
-                    className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
-                    placeholder="0"
-                  ></input>
-                  <div className="ml-2">USD</div>
+              <div className="flex justify-between text-center font-extrabold border border-slate-400 dark:border-white rounded-lg">
+                <button
+                  className={`w-full py-1  rounded-l-lg ${
+                    optionTrading === 'trading'
+                      ? 'bg-slate-300 dark:bg-slate-500 '
+                      : ''
+                  }`}
+                  onClick={() => tradingToken('trading')}
+                >
+                  Trading Size
+                </button>
+                <button
+                  className={`w-full py-1  rounded-r-lg ${
+                    optionTrading === 'coin'
+                      ? 'bg-slate-300 dark:bg-slate-500 '
+                      : ''
+                  }`}
+                  onClick={() => tradingToken('coin')}
+                >
+                  Coin Token
+                </button>
+              </div>{' '}
+              {optionTrading === 'trading' ? (
+                <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white rounded-lg p-4 font-extrabold space-y-0">
+                  <div className="whitespace-nowrap text-xs">Trading Size</div>
+                  <div className="w-full flex justify-end items-center">
+                    <input
+                      type="number"
+                      min="0"
+                      value={tradingSize || ''}
+                      onChange={(e) => setTradingSize(Number(e.target.value))}
+                      className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
+                      placeholder="0"
+                    ></input>
+                    <div className="ml-2">USD</div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white rounded-lg p-4 font-extrabold space-y-0">
+                  <div className="whitespace-nowrap text-xs">Coin Token</div>
+                  <div className="w-full flex justify-end items-center">
+                    <input
+                      type="number"
+                      min="0"
+                      value={quantity || ''}
+                      onChange={(e) => setQuantity(Number(e.target.value))}
+                      className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
+                      placeholder="0"
+                    ></input>
+                    <div className="ml-2">Token</div>
+                  </div>
+                </div>
+              )}
               <div className="flex justify-between text-center font-extrabold border border-slate-400 dark:border-white rounded-lg">
                 <button
                   className={`w-full py-1  rounded-l-lg ${
@@ -285,7 +363,7 @@ const Overview = () => {
                 <div className="w-full flex justify-end items-center">
                   <input
                     type="number"
-                    min="0"
+                    // min=""
                     value={entryPrice || ''}
                     onChange={(e) => setentryPrice(Number(e.target.value))}
                     placeholder="0"
@@ -299,7 +377,7 @@ const Overview = () => {
                 <div className="w-full flex justify-end items-center">
                   <input
                     type="number"
-                    min="0"
+                    min=""
                     placeholder="Optional"
                     value={exitPrice || ''}
                     onChange={(e) => setExitPrice(Number(e.target.value))}
@@ -309,21 +387,42 @@ const Overview = () => {
                   <div className="ml-2">USD</div>
                 </div>
               </div>
-              <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
-                <div className="whitespace-nowrap">Quantity</div>
-                <div className="w-full flex justify-end items-center">
-                  <input
-                    readOnly
-                    type="number"
-                    min="0"
-                    value={quantity.toFixed(2) || ''}
-                    // onChange={quantity}
-                    placeholder=""
-                    className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
-                  ></input>
-                  <div className="ml-2">Tokens</div>
+              {optionTrading === 'trading' ? (
+                <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
+                  <div className="whitespace-nowrap">Quantity</div>
+                  <div className="w-full flex justify-end items-center">
+                    <input
+                      readOnly
+                      type="number"
+                      min=""
+                      value={quantity.toFixed(2) || ''}
+                      // onChange={quantity}
+                      placeholder=""
+                      className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
+                    ></input>
+                    <div className="ml-2">Tokens</div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
+                  <div className="whitespace-nowrap">Trading Size</div>
+                  <div className="w-full flex justify-end items-center">
+                    <input
+                      readOnly
+                      type="number"
+                      min=""
+                      value={
+                        tradingSize?.toFixed(getDecimalPlaces(tradingSize)) ||
+                        ''
+                      }
+                      // onChange={quantity}
+                      placeholder=""
+                      className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
+                    ></input>
+                    <div className="ml-2">USD</div>
+                  </div>
+                </div>
+              )}
               {/* <div>
                 <button className="w-full font-extrabold text-xl border border-[#f5d74c] rounded-lg p-4 bg-[#f5d74c] hover:bg-[#ddbd2a] text-slate-800 ">
                   Calculate
@@ -333,7 +432,7 @@ const Overview = () => {
           </div>
         </div>
         <div>
-          <div className="md:h-[487.5px] border w-full sm:w-[400px] p-5 rounded-lg bg-gray-100 dark:bg-[#202630] text-gray-900 dark:text-gray-100 border-slate-400 dark:border-white font-extrabold shadow-xl">
+          <div className="md:h-[544.04px] border w-full sm:w-[400px] p-5 rounded-lg bg-gray-100 dark:bg-[#202630] text-gray-900 dark:text-gray-100 border-slate-400 dark:border-white font-extrabold shadow-xl">
             <div className="w-full">
               <div className="space-y-5">
                 <div className="flex justify-between">
