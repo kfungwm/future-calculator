@@ -234,6 +234,9 @@ const Overview = () => {
     localStorage.setItem('quantity', quantity.toString())
     localStorage.setItem('leverage', leverage.toString())
   }, [
+    calculateExitPrice,
+    calculateQuantity,
+    calculateLiquidationPrice,
     optionTrading,
     entryPrice,
     exitPrice,
