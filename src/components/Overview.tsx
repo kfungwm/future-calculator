@@ -3,17 +3,42 @@ import React, { useState, useEffect } from 'react'
 import { SunIcon, MoonIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 
 const Overview = () => {
-  const [positionType, setPositionType] = useState<string>('long')
-  const [entryPrice, setentryPrice] = useState<number | undefined>(undefined)
-  const [exitPrice, setExitPrice] = useState<number | undefined>(undefined)
-  const [quantity, setQuantity] = useState<number>(0)
-  const [leverage, setLeverage] = useState<number>(15)
-  const [tradingSize, setTradingSize] = useState<number | undefined>(undefined)
+  const [positionType, setPositionType] = useState(() => {
+    return localStorage.getItem('positionType') || 'long'
+  })
+  // const [entryPrice, setentryPrice] = useState<number | undefined>(undefined)
+  const [entryPrice, setentryPrice] = useState(() => {
+    const storedValue = localStorage.getItem('entryPrice')
+    return storedValue ? Number(storedValue) : undefined
+  })
+
+  const [exitPrice, setExitPrice] = useState(() => {
+    const storedValue = localStorage.getItem('exitPrice')
+    return storedValue ? Number(storedValue) : undefined
+  })
+
+  const [quantity, setQuantity] = useState(() => {
+    const storedQuantity = localStorage.getItem('quantity')
+    return storedQuantity ? Number(storedQuantity) : 0
+  })
+
+  const [leverage, setLeverage] = useState(() => {
+    const storedLeverage = localStorage.getItem('leverage')
+    return storedLeverage ? Number(storedLeverage) : 15
+  })
+
+  const [tradingSize, setTradingSize] = useState(() => {
+    const storedValue = localStorage.getItem('tradingSize')
+    return storedValue ? Number(storedValue) : undefined
+  })
+
   const [liquidationPrice, setLiquidationPrice] = useState<number | null>(0)
   const [roi, setRoi] = useState<number>(0)
   const [pnl, setPnl] = useState<number>(0)
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
-  const [optionTrading, setOptionTrading] = useState<string>('trading')
+  const [optionTrading, setOptionTrading] = useState(() => {
+    return localStorage.getItem('optionTrading') || 'trading'
+  })
 
   const toggleTheme = () => {
     setIsDarkMode((prevMode) => !prevMode)
@@ -58,7 +83,7 @@ const Overview = () => {
       if (
         optionTrading === 'trading' &&
         tradingSize !== undefined &&
-        tradingSize > 0
+        tradingSize >= 0
       ) {
         // Berekening voor 'trading'
         const totalQuantity = (tradingSize * leverage) / entryPrice
@@ -170,6 +195,14 @@ const Overview = () => {
     setExitPrice(undefined)
     setQuantity(0)
     setOptionTrading('trading')
+
+    localStorage.removeItem('optionTrading')
+    localStorage.removeItem('entryPrice')
+    localStorage.removeItem('exitPrice')
+    localStorage.removeItem('tradingSize')
+    localStorage.removeItem('positionType')
+    localStorage.removeItem('quantity')
+    localStorage.removeItem('leverage')
   }
 
   useEffect(() => {
@@ -186,6 +219,30 @@ const Overview = () => {
     roi,
     pnl,
     optionTrading,
+  ])
+
+  useEffect(() => {
+    localStorage.setItem('optionTrading', optionTrading)
+    if (entryPrice !== undefined) {
+      localStorage.setItem('entryPrice', entryPrice.toString())
+    }
+    if (exitPrice !== undefined) {
+      localStorage.setItem('exitPrice', exitPrice.toString())
+    }
+    if (tradingSize !== undefined) {
+      localStorage.setItem('tradingSize', tradingSize.toString())
+    }
+    localStorage.setItem('positionType', positionType)
+    localStorage.setItem('quantity', quantity.toString())
+    localStorage.setItem('leverage', leverage.toString())
+  }, [
+    optionTrading,
+    entryPrice,
+    exitPrice,
+    tradingSize,
+    positionType,
+    quantity,
+    leverage,
   ])
 
   useEffect(() => {
@@ -387,47 +444,47 @@ const Overview = () => {
                   <div className="ml-2">USD</div>
                 </div>
               </div>
-              {optionTrading === 'trading' ? (
-                <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
-                  <div className="whitespace-nowrap">Quantity</div>
-                  <div className="w-full flex justify-end items-center">
-                    <input
-                      readOnly
-                      type="number"
-                      min=""
-                      value={quantity.toFixed(2) || ''}
-                      // onChange={quantity}
-                      placeholder=""
-                      className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
-                    ></input>
-                    <div className="ml-2">Tokens</div>
+              {
+                optionTrading === 'trading' ? (
+                  <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
+                    <div className="whitespace-nowrap">Quantity</div>
+                    <div className="w-full flex justify-end items-center">
+                      <input
+                        readOnly
+                        type="number"
+                        min=""
+                        value={quantity.toFixed(2) || ''}
+                        // onChange={quantity}
+                        placeholder=""
+                        className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
+                      ></input>
+                      <div className="ml-2">Tokens</div>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
-                  <div className="whitespace-nowrap">Trading Size</div>
-                  <div className="w-full flex justify-end items-center">
-                    <input
-                      readOnly
-                      type="number"
-                      min=""
-                      value={
-                        tradingSize?.toFixed(getDecimalPlaces(tradingSize)) ||
-                        ''
-                      }
-                      // onChange={quantity}
-                      placeholder=""
-                      className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
-                    ></input>
-                    <div className="ml-2">USD</div>
-                  </div>
-                </div>
-              )}
-              {/* <div>
-                <button className="w-full font-extrabold text-xl border border-[#f5d74c] rounded-lg p-4 bg-[#f5d74c] hover:bg-[#ddbd2a] text-slate-800 ">
-                  Calculate
-                </button>
-              </div> */}
+                ) : (
+                  ''
+                )
+                // (
+                //   <div className="flex w-full justify-between items-center border border-slate-400 dark:border-white  rounded-lg p-2 px-4 font-extrabold">
+                //     <div className="whitespace-nowrap">Trading Size</div>
+                //     <div className="w-full flex justify-end items-center">
+                //       <input
+                //         readOnly
+                //         type="number"
+                //         min=""
+                //         value={
+                //           tradingSize?.toFixed(getDecimalPlaces(tradingSize)) ||
+                //           ''
+                //         }
+                //         // onChange={quantity}
+                //         placeholder=""
+                //         className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
+                //       ></input>
+                //       <div className="ml-2">USD</div>
+                //     </div>
+                //   </div>
+                // )
+              }
             </div>
           </div>
         </div>
