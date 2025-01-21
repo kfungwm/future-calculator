@@ -4,7 +4,7 @@ import { SunIcon, MoonIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 
 const Overview = () => {
   const [positionType, setPositionType] = useState('long')
-  const [entryPrice, setentryPrice] = useState<number | undefined>(undefined)
+  const [entryPrice, setEntryPrice] = useState<number | undefined>(undefined)
   const [exitPrice, setExitPrice] = useState<number | undefined>(undefined)
   const [quantity, setQuantity] = useState(0)
   const [leverage, setLeverage] = useState(15)
@@ -159,7 +159,7 @@ const Overview = () => {
     setTradingSize(undefined)
     setPositionType('long')
     setLeverage(15)
-    setentryPrice(undefined)
+    setEntryPrice(undefined)
     setExitPrice(undefined)
     setQuantity(0)
     setOptionTrading('trading')
@@ -449,7 +449,7 @@ const Overview = () => {
                     type="number"
                     // min=""
                     value={entryPrice || ''}
-                    onChange={(e) => setentryPrice(Number(e.target.value))}
+                    onChange={(e) => setEntryPrice(Number(e.target.value))}
                     placeholder="0"
                     className="bg-transparent outline-none text-right appearance-none w-32 sm:w-full"
                   ></input>
