@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { SunIcon, MoonIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 
 const Overview = () => {
@@ -78,7 +78,7 @@ const Overview = () => {
   //       console.log('hello tradingSize', tradingSize)
   //     }
   // }
-  const calculateQuantity = () => {
+  const calculateQuantity = useCallback(() => {
     if (entryPrice !== undefined && entryPrice > 0) {
       if (
         optionTrading === 'trading' &&
@@ -87,17 +87,12 @@ const Overview = () => {
       ) {
         const totalQuantity = (tradingSize * leverage) / entryPrice
         setQuantity(totalQuantity)
-        console.log('inside trading calculation')
       } else if (optionTrading === 'coin' && quantity > 0) {
         const totalTradingSize = (quantity / leverage) * entryPrice
         setTradingSize(totalTradingSize)
-        console.log('inside cointoken calculation')
-        console.log('calculated tradingSize:', totalTradingSize)
       }
-    } else {
-      console.log('Entry price is invalid or missing.')
     }
-  }
+  }, [entryPrice, optionTrading, tradingSize, leverage])
 
   const getDecimalPlaces = (price: number): number => {
     if (price >= 1) return 2
@@ -105,7 +100,7 @@ const Overview = () => {
     return 8
   }
 
-  const calculateLiquidationPrice = () => {
+  const calculateLiquidationPrice = useCallback(() => {
     const decimalPlaces = getDecimalPlaces(entryPrice ?? 0)
 
     if (
@@ -133,7 +128,7 @@ const Overview = () => {
       ).toFixed(decimalPlaces)
       setLiquidationPrice(Number(liqPrice))
     }
-  }
+  }, [[entryPrice, tradingSize, leverage, positionType]])
 
   const roiPercentages = [15, 25, 35]
   const roiPnl = (roiPercentage: number) => {
@@ -160,7 +155,7 @@ const Overview = () => {
     return { validRoi, validPnl }
   }
 
-  const calculateExitPrice = () => {
+  const calculateExitPrice = useCallback(() => {
     if (
       entryPrice === undefined ||
       tradingSize === undefined ||
@@ -170,8 +165,8 @@ const Overview = () => {
     }
 
     const margin = tradingSize
-
     const isLong = positionType === 'long'
+
     const roiPercentage = isLong
       ? ((exitPrice - entryPrice) / entryPrice) * 100 * leverage // Long
       : ((entryPrice - exitPrice) / entryPrice) * 100 * leverage // Short
@@ -183,7 +178,7 @@ const Overview = () => {
 
     setRoi(Number(exitRoi))
     setPnl(Number(exitPnl))
-  }
+  }, [entryPrice, tradingSize, exitPrice, leverage, positionType])
 
   const resetValue = () => {
     setTradingSize(undefined)
@@ -208,6 +203,9 @@ const Overview = () => {
     calculateQuantity()
     calculateLiquidationPrice()
   }, [
+    calculateExitPrice,
+    calculateQuantity,
+    calculateLiquidationPrice,
     leverage,
     quantity,
     entryPrice,
@@ -234,9 +232,6 @@ const Overview = () => {
     localStorage.setItem('quantity', quantity.toString())
     localStorage.setItem('leverage', leverage.toString())
   }, [
-    calculateExitPrice,
-    calculateQuantity,
-    calculateLiquidationPrice,
     optionTrading,
     entryPrice,
     exitPrice,
