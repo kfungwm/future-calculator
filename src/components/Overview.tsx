@@ -32,7 +32,7 @@ const Overview = () => {
     return storedValue ? Number(storedValue) : undefined
   })
 
-  const [liquidationPrice, setLiquidationPrice] = useState<number>(0)
+  const [liquidationPrice, setLiquidationPrice] = useState<number | null>(0)
   const [roi, setRoi] = useState<number>(0)
   const [pnl, setPnl] = useState<number>(0)
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
