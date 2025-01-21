@@ -6,7 +6,7 @@ const Overview = () => {
   const [positionType, setPositionType] = useState(() => {
     return localStorage.getItem('positionType') || 'long'
   })
-  // const [entryPrice, setentryPrice] = useState<number | undefined>(undefined)
+
   const [entryPrice, setentryPrice] = useState(() => {
     const storedValue = localStorage.getItem('entryPrice')
     return storedValue ? Number(storedValue) : undefined
@@ -32,7 +32,7 @@ const Overview = () => {
     return storedValue ? Number(storedValue) : undefined
   })
 
-  const [liquidationPrice, setLiquidationPrice] = useState<number | null>(0)
+  const [liquidationPrice, setLiquidationPrice] = useState<number>(0)
   const [roi, setRoi] = useState<number>(0)
   const [pnl, setPnl] = useState<number>(0)
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
@@ -85,12 +85,10 @@ const Overview = () => {
         tradingSize !== undefined &&
         tradingSize >= 0
       ) {
-        // Berekening voor 'trading'
         const totalQuantity = (tradingSize * leverage) / entryPrice
         setQuantity(totalQuantity)
         console.log('inside trading calculation')
       } else if (optionTrading === 'coin' && quantity > 0) {
-        // Berekening voor 'cointoken'
         const totalTradingSize = (quantity / leverage) * entryPrice
         setTradingSize(totalTradingSize)
         console.log('inside cointoken calculation')
