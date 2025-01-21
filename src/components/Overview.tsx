@@ -92,7 +92,7 @@ const Overview = () => {
         setTradingSize(totalTradingSize)
       }
     }
-  }, [entryPrice, optionTrading, tradingSize, leverage])
+  }, [entryPrice, optionTrading, tradingSize, leverage, quantity])
 
   const getDecimalPlaces = (price: number): number => {
     if (price >= 1) return 2
@@ -128,7 +128,7 @@ const Overview = () => {
       ).toFixed(decimalPlaces)
       setLiquidationPrice(Number(liqPrice))
     }
-  }, [[entryPrice, tradingSize, leverage, positionType]])
+  }, [entryPrice, tradingSize, leverage, positionType])
 
   const roiPercentages = [15, 25, 35]
   const roiPnl = (roiPercentage: number) => {
