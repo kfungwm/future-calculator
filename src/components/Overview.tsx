@@ -3,54 +3,17 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { SunIcon, MoonIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 
 const Overview = () => {
-  const [positionType, setPositionType] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('positionType') || 'long'
-    }
-    return 'long'
-  })
-
-  const [entryPrice, setentryPrice] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const storedValue = localStorage.getItem('entryPrice')
-      return storedValue ? Number(storedValue) : undefined
-    }
-    return undefined
-  })
-
-  const [exitPrice, setExitPrice] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const storedValue = localStorage.getItem('exitPrice')
-      return storedValue ? Number(storedValue) : undefined
-    }
-    return undefined
-  })
-
-  const [quantity, setQuantity] = useState(() => {
-    const storedQuantity = localStorage.getItem('quantity')
-    return storedQuantity ? Number(storedQuantity) : 0
-  })
-
-  const [leverage, setLeverage] = useState(() => {
-    const storedLeverage = localStorage.getItem('leverage')
-    return storedLeverage ? Number(storedLeverage) : 15
-  })
-
-  const [tradingSize, setTradingSize] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const storedValue = localStorage.getItem('tradingSize')
-      return storedValue ? Number(storedValue) : undefined
-    }
-    return undefined
-  })
-
+  const [positionType, setPositionType] = useState('long')
+  const [entryPrice, setentryPrice] = useState<number | undefined>(undefined)
+  const [exitPrice, setExitPrice] = useState<number | undefined>(undefined)
+  const [quantity, setQuantity] = useState(0)
+  const [leverage, setLeverage] = useState(15)
+  const [tradingSize, setTradingSize] = useState<number | undefined>(undefined)
   const [liquidationPrice, setLiquidationPrice] = useState<number | null>(0)
   const [roi, setRoi] = useState<number>(0)
   const [pnl, setPnl] = useState<number>(0)
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
-  const [optionTrading, setOptionTrading] = useState(() => {
-    return localStorage.getItem('optionTrading') || 'trading'
-  })
+  const [optionTrading, setOptionTrading] = useState('trading')
 
   const toggleTheme = () => {
     setIsDarkMode((prevMode) => !prevMode)
@@ -229,28 +192,84 @@ const Overview = () => {
     optionTrading,
   ])
 
+  // useEffect(() => {
+  //   localStorage.setItem('optionTrading', optionTrading)
+  //   if (entryPrice !== undefined) {
+  //     localStorage.setItem('entryPrice', entryPrice.toString())
+  //   }
+  //   if (exitPrice !== undefined) {
+  //     localStorage.setItem('exitPrice', exitPrice.toString())
+  //   }
+  //   if (tradingSize !== undefined) {
+  //     localStorage.setItem('tradingSize', tradingSize.toString())
+  //   }
+  //   localStorage.setItem('positionType', positionType)
+  //   localStorage.setItem('quantity', quantity.toString())
+  //   localStorage.setItem('leverage', leverage.toString())
+  // }, [
+  //   optionTrading,
+  //   entryPrice,
+  //   exitPrice,
+  //   tradingSize,
+  //   positionType,
+  //   quantity,
+  //   leverage,
+  // ])
   useEffect(() => {
-    localStorage.setItem('optionTrading', optionTrading)
-    if (entryPrice !== undefined) {
-      localStorage.setItem('entryPrice', entryPrice.toString())
+    if (typeof window !== 'undefined') {
+      const storedPositionType = localStorage.getItem('positionType')
+      if (storedPositionType) setPositionType(storedPositionType)
+
+      const storedEntryPrice = localStorage.getItem('entryPrice')
+      if (storedEntryPrice) setEntryPrice(Number(storedEntryPrice))
+
+      const storedExitPrice = localStorage.getItem('exitPrice')
+      if (storedExitPrice) setExitPrice(Number(storedExitPrice))
+
+      const storedQuantity = localStorage.getItem('quantity')
+      if (storedQuantity) setQuantity(Number(storedQuantity))
+
+      const storedLeverage = localStorage.getItem('leverage')
+      if (storedLeverage) setLeverage(Number(storedLeverage))
+
+      const storedTradingSize = localStorage.getItem('tradingSize')
+      if (storedTradingSize) setTradingSize(Number(storedTradingSize))
+
+      const storedOptionTrading = localStorage.getItem('optionTrading')
+      if (storedOptionTrading) setOptionTrading(storedOptionTrading)
+
+      const savedMode = localStorage.getItem('theme')
+      if (savedMode === 'dark') {
+        setIsDarkMode(true)
+        document.documentElement.classList.add('dark')
+      } else if (savedMode === 'light') {
+        setIsDarkMode(false)
+        document.documentElement.classList.remove('dark')
+      }
     }
-    if (exitPrice !== undefined) {
-      localStorage.setItem('exitPrice', exitPrice.toString())
+  }, [])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('positionType', positionType)
+      if (entryPrice !== undefined)
+        localStorage.setItem('entryPrice', entryPrice.toString())
+      if (exitPrice !== undefined)
+        localStorage.setItem('exitPrice', exitPrice.toString())
+      localStorage.setItem('quantity', quantity.toString())
+      localStorage.setItem('leverage', leverage.toString())
+      if (tradingSize !== undefined)
+        localStorage.setItem('tradingSize', tradingSize.toString())
+      localStorage.setItem('optionTrading', optionTrading)
     }
-    if (tradingSize !== undefined) {
-      localStorage.setItem('tradingSize', tradingSize.toString())
-    }
-    localStorage.setItem('positionType', positionType)
-    localStorage.setItem('quantity', quantity.toString())
-    localStorage.setItem('leverage', leverage.toString())
   }, [
-    optionTrading,
+    positionType,
     entryPrice,
     exitPrice,
-    tradingSize,
-    positionType,
     quantity,
     leverage,
+    tradingSize,
+    optionTrading,
   ])
 
   useEffect(() => {
