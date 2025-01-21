@@ -4,17 +4,26 @@ import { SunIcon, MoonIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 
 const Overview = () => {
   const [positionType, setPositionType] = useState(() => {
-    return localStorage.getItem('positionType') || 'long'
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('positionType') || 'long'
+    }
+    return 'long'
   })
 
   const [entryPrice, setentryPrice] = useState(() => {
-    const storedValue = localStorage.getItem('entryPrice')
-    return storedValue ? Number(storedValue) : undefined
+    if (typeof window !== 'undefined') {
+      const storedValue = localStorage.getItem('entryPrice')
+      return storedValue ? Number(storedValue) : undefined
+    }
+    return undefined
   })
 
   const [exitPrice, setExitPrice] = useState(() => {
-    const storedValue = localStorage.getItem('exitPrice')
-    return storedValue ? Number(storedValue) : undefined
+    if (typeof window !== 'undefined') {
+      const storedValue = localStorage.getItem('exitPrice')
+      return storedValue ? Number(storedValue) : undefined
+    }
+    return undefined
   })
 
   const [quantity, setQuantity] = useState(() => {
@@ -28,8 +37,11 @@ const Overview = () => {
   })
 
   const [tradingSize, setTradingSize] = useState(() => {
-    const storedValue = localStorage.getItem('tradingSize')
-    return storedValue ? Number(storedValue) : undefined
+    if (typeof window !== 'undefined') {
+      const storedValue = localStorage.getItem('tradingSize')
+      return storedValue ? Number(storedValue) : undefined
+    }
+    return undefined
   })
 
   const [liquidationPrice, setLiquidationPrice] = useState<number | null>(0)
